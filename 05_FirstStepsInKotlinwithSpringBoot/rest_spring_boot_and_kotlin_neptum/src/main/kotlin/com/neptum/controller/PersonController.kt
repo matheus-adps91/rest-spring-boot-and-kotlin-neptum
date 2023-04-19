@@ -1,6 +1,6 @@
 package com.neptum.controller
 
-import com.neptum.model.Person
+import com.neptum.data.vo.v1.PersonVO
 import com.neptum.service.PersonService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
@@ -19,25 +19,22 @@ class PersonController {
 
     @Autowired
     private lateinit var service: PersonService
-
-    @PostMapping
-    fun create(@RequestBody person : Person): Person {
-        return service.create(person)
+    @GetMapping
+    fun findAll(): List<PersonVO> {
+        return service.findAll()
     }
-
     @GetMapping("/{id}")
-    fun findById(@PathVariable(value = "id") id: Long ): Person {
+    fun findById(@PathVariable(value = "id") id: Long ): PersonVO {
         return service.findById(id)
     }
-
-    @GetMapping
-    fun findAll(): List<Person> {
-        return service.findAll()
+    @PostMapping
+    fun create(@RequestBody personVO : PersonVO): PersonVO {
+        return service.create(personVO)
     }
 
     @PutMapping
-    fun update(@RequestBody person: Person) : Person {
-        return service.update(person)
+    fun update(@RequestBody personVO: PersonVO) : PersonVO {
+        return service.update(personVO)
     }
 
     @DeleteMapping("/{id}")

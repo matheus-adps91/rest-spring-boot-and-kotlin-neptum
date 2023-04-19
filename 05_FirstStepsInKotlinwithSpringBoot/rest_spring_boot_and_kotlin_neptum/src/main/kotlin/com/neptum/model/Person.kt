@@ -5,7 +5,6 @@ import jakarta.persistence.*
 @Entity
 @Table(name = "person")
 data class Person (
-
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY)
     var id: Long = 0,
@@ -16,4 +15,5 @@ data class Person (
     @Column(nullable = false, length = 100)
     var address: String = "",
     @Column(nullable = false, length = 6)
-    var gender: String = "")
+    var gender: String = ""
+)
