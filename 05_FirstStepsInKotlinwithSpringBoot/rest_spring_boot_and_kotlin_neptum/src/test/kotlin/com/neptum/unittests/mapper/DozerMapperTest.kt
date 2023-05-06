@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 import com.neptum.data.vo.v1.PersonVO
 import com.neptum.mapper.DozerMapper
 import com.neptum.model.Person
-import com.neptum.unittests.mapper.mocks.MockPerson
+import com.neptum.unittests.mocks.MockPerson
 
 class DozerMapperTest {
 
