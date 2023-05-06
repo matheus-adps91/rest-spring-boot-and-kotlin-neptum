@@ -1,8 +1,8 @@
-package com.neptum.mockito.service
+package com.neptum.unittests.mockito.services
 
 import com.neptum.repository.PersonRepository
 import com.neptum.service.PersonService
-import com.neptum.unittests.mapper.mocks.MockPerson
+import com.neptum.unittests.mocks.MockPerson
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 

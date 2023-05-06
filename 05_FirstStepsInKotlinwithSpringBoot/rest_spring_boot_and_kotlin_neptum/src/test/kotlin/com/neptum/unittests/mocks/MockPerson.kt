@@ -1,4 +1,4 @@
-package com.neptum.unittests.mapper.mocks
+package com.neptum.unittests.mocks
 
 import com.neptum.model.Person
 import java.util.ArrayList
