@@ -1,7 +1,7 @@
 package com.neptum.integrationtests.swagger
 
 import com.neptum.integrationtests.testcontainers.AbstractIntegrationTest
-import com.neptum.integrationtests.ConfigsTest
+import com.neptum.integrationtests.TestConfigs
 import io.restassured.RestAssured.given
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -14,7 +14,7 @@ class SwaggerIntegrationTest() : AbstractIntegrationTest() {
 	fun showDisplaySwaggerUiPage() {
 		val content = given()
 			.basePath("/swagger-ui/index.html")
-			.port(ConfigsTest.SERVER_PORT)
+			.port(TestConfigs.SERVER_PORT)
 				.`when`()
 			.get()
 			.then()

@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -53,6 +54,8 @@ class PersonController {
     fun findAll(): List<PersonVO> {
         return service.findAll()
     }
+
+    @CrossOrigin(origins = ["http://localhost:8080"])
     @GetMapping("/{id}")
     @Operation(summary = "Finds a Person", description = "Finds a Person",
         tags = ["People"],
@@ -79,6 +82,7 @@ class PersonController {
     fun findById(@PathVariable(value = "id") id: Long ): PersonVO {
         return service.findById(id)
     }
+    @CrossOrigin(origins = ["http://localhost:3000","http://localhost:8080","https://neptum.com.br"])
     @PostMapping
     @Operation(summary = "Adds a new Person", description = "Adds a new Person",
         tags = ["People"],
