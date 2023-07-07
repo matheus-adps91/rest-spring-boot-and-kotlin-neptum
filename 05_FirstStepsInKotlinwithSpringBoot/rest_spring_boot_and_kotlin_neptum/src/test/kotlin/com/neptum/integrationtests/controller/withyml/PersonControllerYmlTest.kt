@@ -110,6 +110,7 @@ class PersonControllerYmlTest: AbstractIntegrationTest() {
         assertEquals("Stallman", item.lastName)
         assertEquals("New York City, New York, US", item.address)
         assertEquals("Male", item.gender)
+        assertEquals(true, item.enabled)
     }
 
     @Test
@@ -149,10 +150,42 @@ class PersonControllerYmlTest: AbstractIntegrationTest() {
         assertEquals("Matthew Stalman", item.lastName)
         assertEquals("New York City, New York, US", item.address)
         assertEquals("Male", item.gender)
+        assertEquals(true, item.enabled)
     }
 
     @Test
     @Order(3)
+    fun testDisablePersonById() {
+        val item = given()
+            .spec(specification)
+            .contentType(TestConfigs.CONTENT_TYPE_YML)
+            .pathParam("id", person.id)
+            .`when`()
+            .patch("{id}")
+            .then()
+            .statusCode(200)
+            .extract()
+            .body()
+            .`as`(PersonVO::class.java, objectMapper)
+
+
+        person = item
+
+        assertNotNull(item.id)
+        assertNotNull(item.firstName)
+        assertNotNull(item.lastName)
+        assertNotNull(item.address)
+        assertNotNull(item.gender)
+        assertEquals(person.id, item.id)
+        assertEquals("Richard", item.firstName)
+        assertEquals("Matthew Stalman", item.lastName)
+        assertEquals("New York City, New York, US", item.address)
+        assertEquals("Male", item.gender)
+        assertEquals(false, item.enabled)
+    }
+
+    @Test
+    @Order(4)
     fun testFindById() {
         val item = given()
             .config(
@@ -186,10 +219,11 @@ class PersonControllerYmlTest: AbstractIntegrationTest() {
         assertEquals("Matthew Stalman", item.lastName)
         assertEquals("New York City, New York, US", item.address)
         assertEquals("Male", item.gender)
+        assertEquals(false, item.enabled)
     }
 
     @Test
-    @Order(4)
+    @Order(5)
     fun testDelete() {
         given()
             .spec(specification)
@@ -201,7 +235,7 @@ class PersonControllerYmlTest: AbstractIntegrationTest() {
     }
 
     @Test
-    @Order(5)
+    @Order(6)
     fun testFindAll() {
         val people = given()
             .config(
@@ -233,6 +267,7 @@ class PersonControllerYmlTest: AbstractIntegrationTest() {
         assertEquals("Da Vinci", item.lastName)
         assertEquals("Anchiano - Italy", item.address)
         assertEquals("Male", item.gender)
+        assertEquals(true, item.enabled)
 
         val item2 = people[3]
 
@@ -245,6 +280,7 @@ class PersonControllerYmlTest: AbstractIntegrationTest() {
         assertEquals("Gandhi", item2.lastName)
         assertEquals("Porbandar - India", item2.address)
         assertEquals("Female", item2.gender)
+        assertEquals(true, item.enabled)
     }
 
     private fun mockPerson() {
@@ -252,5 +288,6 @@ class PersonControllerYmlTest: AbstractIntegrationTest() {
         person.lastName = "Stallman"
         person.address = "New York City, New York, US"
         person.gender = "Male"
+        person.enabled = true
     }
 }

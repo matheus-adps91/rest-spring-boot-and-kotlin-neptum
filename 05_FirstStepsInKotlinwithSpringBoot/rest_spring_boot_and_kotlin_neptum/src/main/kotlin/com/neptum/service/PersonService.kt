@@ -10,6 +10,7 @@ import com.neptum.repository.PersonRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.logging.Logger
 
 @Service
@@ -67,6 +68,17 @@ class PersonService {
         return personVO
     }
 
+    @Transactional
+    fun disablePerson(id: Long) : PersonVO {
+        logger.info("Desabling one person with ID $id!")
+        personRepository.disablePerson(id)
+        val person = personRepository.findById(id)
+            .orElseThrow { ResourceNotFoundException("No records found for this ID") }
+        val personVO = DozerMapper.parseObject(person, PersonVO::class.java)
+        val withSelfRel = linkTo(PersonController::class.java).slash(personVO.key).withSelfRel()
+        personVO.add(withSelfRel)
+        return personVO
+    }
 
     fun delete(id: Long) {
         logger.info("Deleting a person with id = $id")
