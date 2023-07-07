@@ -71,7 +71,7 @@ class PersonService {
     fun delete(id: Long) {
         logger.info("Deleting a person with id = $id")
         val person = personRepository.findById(id)
-            .orElseThrow { ResourceNotFoundException("No records foudn for this ID") }
+            .orElseThrow { ResourceNotFoundException("No records found for this ID") }
         personRepository.delete(person)
     }
 }

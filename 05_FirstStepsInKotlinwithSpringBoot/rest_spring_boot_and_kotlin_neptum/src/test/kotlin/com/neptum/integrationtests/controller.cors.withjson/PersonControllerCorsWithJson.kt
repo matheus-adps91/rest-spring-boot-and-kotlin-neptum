@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.neptum.integrationtests.testcontainers.AbstractIntegrationTest
 import com.neptum.integrationtests.TestConfigs
+import com.neptum.integrationtests.vo.AccountCredentialsVO
 import com.neptum.integrationtests.vo.PersonVO
+import com.neptum.integrationtests.vo.TokenVO
 import io.restassured.RestAssured.given
 import io.restassured.builder.RequestSpecBuilder
 import io.restassured.filter.log.LogDetail
@@ -29,11 +31,36 @@ class PersonControllerCorsWithJson() : AbstractIntegrationTest() {
 	private lateinit var objectMapper: ObjectMapper
 	private lateinit var person: PersonVO
 
+	private lateinit var token: String
+
 	@BeforeAll
 	fun setupTests() {
 		objectMapper = ObjectMapper()
 		objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
 		person = PersonVO()
+	}
+
+	@Test
+	@Order(0)
+	fun authorization() {
+		val user = AccountCredentialsVO(
+			username = "leandro",
+			password = "admin123"
+		)
+
+		token = given()
+			.basePath("/auth/signin")
+			.port(TestConfigs.SERVER_PORT)
+			.contentType(TestConfigs.CONTENT_TYPE_JSON)
+			.body(user)
+			.`when`()
+			.post()
+			.then()
+			.statusCode(200)
+				.extract()
+				.body()
+			.`as`(TokenVO::class.java)
+				.accessToken!!
 	}
 
 	@Test
@@ -45,6 +72,10 @@ class PersonControllerCorsWithJson() : AbstractIntegrationTest() {
 			.addHeader(
 				TestConfigs.HEADER_PARAM_ORIGIN,
 				TestConfigs.ORIGIN_LOCALHOST
+			)
+			.addHeader(
+				TestConfigs.HEADER_PARAM_AUTHORIZATION,
+				"Bearer $token"
 			)
 			.setBasePath("/api/person/v1")
 			.setPort(TestConfigs.SERVER_PORT)
@@ -93,6 +124,10 @@ class PersonControllerCorsWithJson() : AbstractIntegrationTest() {
 				TestConfigs.HEADER_PARAM_ORIGIN,
 				TestConfigs.ORIGIN_SEMERU
 			)
+			.addHeader(
+				TestConfigs.HEADER_PARAM_AUTHORIZATION,
+				"Bearer $token"
+			)
 			.setBasePath("/api/person/v1")
 			.setPort(TestConfigs.SERVER_PORT)
 			.addFilter(RequestLoggingFilter(LogDetail.ALL))
@@ -123,6 +158,10 @@ class PersonControllerCorsWithJson() : AbstractIntegrationTest() {
 			.addHeader(
 				TestConfigs.HEADER_PARAM_ORIGIN,
 				TestConfigs.ORIGIN_LOCALHOST
+			)
+			.addHeader(
+				TestConfigs.HEADER_PARAM_AUTHORIZATION,
+				"Bearer $token"
 			)
 			.setBasePath("/api/person/v1")
 			.setPort(TestConfigs.SERVER_PORT)
@@ -168,6 +207,10 @@ class PersonControllerCorsWithJson() : AbstractIntegrationTest() {
 			.addHeader(
 				TestConfigs.HEADER_PARAM_ORIGIN,
 				TestConfigs.ORIGIN_NEPTUM
+			)
+			.addHeader(
+				TestConfigs.HEADER_PARAM_AUTHORIZATION,
+				"Bearer $token"
 			)
 			.setBasePath("/api/person/v1")
 			.setPort(TestConfigs.SERVER_PORT)

@@ -1,6 +1,7 @@
 package com.neptum.exceptions.handler
 
 import com.neptum.exceptions.ExceptionResponse
+import com.neptum.exceptions.InvalidJwtAuthenticationException
 import com.neptum.exceptions.RequiredObjectIsNullException
 import com.neptum.exceptions.ResourceNotFoundException
 import org.springframework.http.HttpStatus
@@ -42,6 +43,15 @@ class CustomizedResponseEntityExceptionHandler : ResponseEntityExceptionHandler(
             ex.message,
             request.getDescription(false)
         )
-        return ResponseEntity<ExceptionResponse>(exceptionResponse, HttpStatus.NOT_FOUND)
+        return ResponseEntity<ExceptionResponse>(exceptionResponse, HttpStatus.BAD_REQUEST)
+    }
+    @ExceptionHandler(InvalidJwtAuthenticationException::class)
+    fun handleInvalidJwtAuthenticationException(ex: Exception, request: WebRequest) : ResponseEntity<ExceptionResponse> {
+        val exceptionResponse = ExceptionResponse(
+            Date(),
+            ex.message,
+            request.getDescription(false)
+        )
+        return ResponseEntity<ExceptionResponse>(exceptionResponse, HttpStatus.FORBIDDEN)
     }
 }
