@@ -9,6 +9,10 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
+import org.springframework.hateoas.EntityModel
+import org.springframework.hateoas.PagedModel
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -48,8 +52,15 @@ class BookController {
             ]),
         ]
     )
-    fun findAll(): List<BookVO> {
-        return service.findAll()
+    fun findAll(
+        @RequestParam(value = "page", defaultValue = "0") page: Int,
+        @RequestParam(value = "size", defaultValue = "12") size: Int,
+        @RequestParam(value = "direction", defaultValue = "asc") direction: String,
+    ): ResponseEntity<PagedModel<EntityModel<BookVO>>> {
+        val sortDirection =
+            if (direction.equals("asc", ignoreCase = true)) Sort.Direction.ASC else Sort.Direction.DESC
+        val pageable = PageRequest.of(page, size, Sort.by(sortDirection, "title"))
+        return ResponseEntity.ok(service.findAll(pageable))
     }
 
     @GetMapping("/{id}")

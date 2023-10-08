@@ -8,6 +8,11 @@ import com.neptum.mapper.DozerMapper
 import com.neptum.model.Person
 import com.neptum.repository.PersonRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import org.springframework.data.web.PagedResourcesAssembler
+import org.springframework.hateoas.EntityModel
+import org.springframework.hateoas.PagedModel
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.stereotype.Service
 import java.util.logging.Logger
@@ -18,17 +23,29 @@ class PersonService {
     @Autowired
     private lateinit var personRepository: PersonRepository
 
+    @Autowired
+    private lateinit var assembler: PagedResourcesAssembler<PersonVO>
+
     private val logger = Logger.getLogger(PersonService::class.java.name)
 
-    fun findAll() : List<PersonVO> {
+    fun findAll(pageable: PageRequest): PagedModel<EntityModel<PersonVO>> {
+
         logger.info("Finding all people")
-        val persons = personRepository.findAll()
-        val personVOs = DozerMapper.parseListObjects(persons, PersonVO::class.java)
-        for (person in personVOs){
-            val withSelfRel = linkTo(PersonController::class.java).slash(person).withSelfRel()
-            person.add(withSelfRel)
-        }
-        return personVOs
+
+        val persons = personRepository.findAll(pageable)
+        val vos = persons.map { p -> DozerMapper.parseObject(p, PersonVO::class.java) }
+        vos.map { p -> p.add(linkTo(PersonController::class.java).slash(p.key).withSelfRel()) }
+        return assembler.toModel(vos)
+    }
+
+    fun findPersonByName(firstName: String, pageable: Pageable): PagedModel<EntityModel<PersonVO>> {
+
+        logger.info("Finding all people")
+
+        val persons = personRepository.findPersonByName(firstName, pageable)
+        val vos = persons.map { p -> DozerMapper.parseObject(p, PersonVO::class.java) }
+        vos.map { p -> p.add(linkTo(PersonController::class.java).slash(p.key).withSelfRel()) }
+        return assembler.toModel(vos)
     }
 
     fun findById(id: Long) : PersonVO {
