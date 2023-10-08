@@ -6,8 +6,8 @@ import org.springframework.boot.runApplication
 @SpringBootApplication
 class Startup
 
-fun main(args: Array<String>) {
-	runApplication<Startup>(*args)
+fun main() {
+	runApplication<Startup>()
 
 /*	val encoders: MutableMap<String, PasswordEncoder> = HashMap()
 	val pbkdf2Encoder = Pbkdf2PasswordEncoder("", 8, 185000, Pbkdf2PasswordEncoder.SecretKeyFactoryAlgorithm.PBKDF2WithHmacSHA256)
